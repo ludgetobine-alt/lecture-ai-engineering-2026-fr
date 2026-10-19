@@ -1,19 +1,19 @@
-# 第2回 解答
+# Lecture 02 : réponses
 
-## 演習
+## Exercice
 
-- 使ったモデル・設定（`result.json` の `config` から）：
-- 自分で学習を実行したか（`executed_training_myself`）：はい / いいえ（実行できた範囲：　）
-- 学習前：`format_rate` =　 / `content_rate` =　
-- 学習後：`format_rate` =　 / `content_rate` =　
-- 退行した質問：
-- 学習後に残った失敗と、その型（根拠なしの質問に断定した / 根拠ありの質問に確認要求で逃げた / 形式の崩れ）：
-- 知識を問う質問（セクション 6）の結果（学習前の分類 → 学習後の分類）と気づいたこと：
-- 学習で変わったこと・変わらなかったこと：
+- Modèle et configuration utilisés (depuis `config` dans `result.json`) :
+- Avez-vous exécuté l’entraînement vous-même (`executed_training_myself`) : oui / non (parties exécutées : )
+- Avant l’entraînement : `format_rate` = / `content_rate` =
+- Après l’entraînement : `format_rate` = / `content_rate` =
+- Questions ayant régressé :
+- Échecs restants après l’entraînement et leur type (affirmation sans preuve / demande de vérification malgré une preuve / format incorrect) :
+- Résultats des questions de connaissance (section 6 ; classification avant → après) et observations :
+- Ce que l’entraînement a changé ou n’a pas changé :
 
-## 宿題
+## Devoir
 
-- 取り組んだレベル：基礎 / 実装 / 発展
-- 変えた設定やデータ：
-- 結果（比較表や数字）：
-- ファインチューニングが向く場面・向かない場面についての考察：
+- Niveau choisi : bases / mise en œuvre / approfondissement
+- Configuration ou données modifiées :
+- Résultats (tableau comparatif ou chiffres) :
+- Réflexions sur les situations où l’ajustement fin convient ou non :

@@ -1,10 +1,10 @@
-"""第2回 宿題（発展）: 用語集から SFT 用の Q&A データ（JSONL）を作る。
+"""Lecture 02, devoir d’approfondissement : créer des paires Q&R pour SFT (JSONL) à partir du glossaire.
 
-使い方:
+Utilisation :
     uv run python scripts/make_sft_dataset.py > glossary_sft.jsonl
 
-できたファイルを Colab にアップロードし、LoRA 学習のデータとして使う。
-質問の言い回しを増やす、別名でも質問を作る、検証用に一部を分ける、などを工夫してみよう。
+Téléverser le fichier dans Colab et l’utiliser comme données d’entraînement LoRA.
+Essayer de varier les formulations, de créer des questions avec les alias ou de réserver des données de validation.
 """
 
 import json
@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 GLOSSARY = Path(__file__).resolve().parent.parent / "data" / "glossary.json"
-TEMPLATES = ["「{term}」とは何ですか？", "{term}について簡単に説明してください。"]
+TEMPLATES = ["Qu’est-ce que « {term} » ?", "Expliquez brièvement {term}."]
 
 
 def main() -> None:

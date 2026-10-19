@@ -1,65 +1,65 @@
-# 第2回 演習・宿題：LoRA で回答形式を学習し、学習前後を比較する
+# Lecture 02 : exercices et devoir — apprendre un format de réponse avec LoRA et comparer avant et après
 
-この回は Google Colab（T4 GPU、無料枠）で行います。Codespaces は使いません。
+Cette séance se déroule dans Google Colab (GPU T4, offre gratuite). Codespaces n’est pas utilisé.
 
-## この回のゴール
+## Objectifs de la séance
 
-- 小さなモデルを LoRA で短時間学習させ、学習の前後で **何が変わり、何が変わらないか** を数字と出力で確かめる
-- 「形式は学習で身につくが、知らないことへの判断（確認を求めるか、断定するか）までは保証されない」ことを、自分の結果で説明できる
-- ファインチューニングが向く場面と向かない場面を、自分の言葉で説明できる
+- Entraîner rapidement un petit modèle avec LoRA et vérifier, chiffres et sorties à l’appui, **ce qui change et ce qui ne change pas**
+- Expliquer à partir de vos résultats que l’apprentissage du format ne garantit pas le bon jugement face à l’inconnu (demander une vérification ou affirmer une réponse)
+- Expliquer avec vos propres mots les situations où l’ajustement fin convient ou non
 
-## 使うノートブック
+## Notebook utilisé
 
-- [notebooks/lora_format_tuning.ipynb](../../notebooks/lora_format_tuning.ipynb)
-- Colab で開く：https://colab.research.google.com/github/matsuolab/lecture-ai-engineering-2026/blob/main/notebooks/lora_format_tuning.ipynb
+- [Notebook LoRA : notebooks/lora_format_tuning.ipynb](../../notebooks/lora_format_tuning.ipynb)
+- Ouvrir dans Colab : https://colab.research.google.com/github/matsuolab/lecture-ai-engineering-2026-fr/blob/main/notebooks/lora_format_tuning.ipynb
 
-架空の講座 FAQ（5 項目）を題材に、`Qwen/Qwen3.5-0.8B` を LoRA で 20 エポック（学習データ 14 件を 20 周、40 ステップ。T4 で 4〜5 分）学習します。
-望ましい出力は `{"answer": ..., "needs_review": ...}` の JSON 1 行で、FAQ に無い質問には `needs_review: true` で「確認が必要」と答えるのが正解です。
-評価は **形式遵守率**（JSON の形式を守れたか）と **内容正解率**（`needs_review` と答えの語句が正解と合うか）の 2 つに分けます。
+À partir d’une FAQ de cours fictive de 5 entrées, entraînez `Qwen/Qwen3.5-0.8B` avec LoRA pendant 20 époques (20 passages sur 14 exemples, soit 40 étapes ; 4 à 5 minutes sur T4 dans l’exercice original en japonais).
+La sortie souhaitée est une ligne JSON `{"answer": ..., "needs_review": ...}`. Pour une question absente de la FAQ, la bonne réponse indique qu’une vérification est nécessaire, avec `needs_review: true`.
+L’évaluation distingue le **taux de respect du format** (format JSON respecté) du **taux de réponses au contenu correct** (`needs_review` et expressions de la réponse conformes à la référence).
 
-## 事前準備（任意、5 分）
+## Préparation facultative (5 minutes)
 
-授業の前にノートブックのセクション 0〜3 を実行し、GPU の割り当て、ライブラリの導入、モデルのダウンロードができることを確かめておくと、当日の詰まりが減ります。
-Colab はセッションが切れると変数が消えるので、当日はあらためて 0 から実行します。
+Avant le cours, exécuter les sections 0 à 3 du notebook permet de vérifier l’attribution d’un GPU, l’installation des bibliothèques et le téléchargement du modèle, et de réduire les difficultés le jour même.
+Les variables de Colab disparaissent lorsque la session est interrompue : le jour du cours, recommencez à la section 0.
 
-## 演習（30分）
+## Exercice (30 minutes)
 
-1. Colab でノートブックを開き、**ファイル → ドライブにコピーを保存** で自分用にコピーする
-2. **ランタイム → ランタイムのタイプを変更 → T4 GPU** を選ぶ
-3. セクション 0〜3 を上から実行する（約 5 分）。学習前の表で、**どのキーが欠けているか**、文面は FAQ と合っているかを読む
-4. セクション 4 で学習する（4〜5 分）。待ち時間に「LoRA と QLoRA の違い」の説明を読む。`trainable%` と `Training Loss` の推移を確認する
-5. セクション 5〜6 で学習後を評価し、学習前と比べる
-   - 比較表：`format_rate` と `content_rate` はどう変わったか
-   - `退行`：学習前は通っていたのに学習後に落ちた質問（空が期待値）
-   - 残った失敗の型：FAQ に無い質問に別項目を当てて**断定**したか、FAQ にある質問に「記載がありません」と**逃げた**か
-   - セクション 6：FAQ にも学習データにも無い質問に、確認を求めたか・断定したか
-6. セクション 7 で `result.json` を作る。要点を `lectures/02/answer.md` に書き、作業ブランチ `lec02` から自分の fork の `main` へ PR を出す（answer.md の編集は GitHub の画面上で行ってもよい）。`result.json` は `lectures/02/` に置いて PR に含めてもよい
-7. **ランタイム → ランタイムを接続解除して削除**
+1. Ouvrez le notebook dans Colab et créez votre copie avec **File → Save a copy in Drive**
+2. Choisissez **Runtime → Change runtime type → T4 GPU**
+3. Exécutez les sections 0 à 3 dans l’ordre (environ 5 minutes). Dans le tableau avant entraînement, repérez **les clés manquantes** et vérifiez si le texte correspond à la FAQ
+4. Lancez l’entraînement en section 4 (4 à 5 minutes dans l’exercice original en japonais ; la durée peut varier avec les données françaises). Pendant l’attente, lisez « Différences entre LoRA et QLoRA ». Examinez `trainable%` et l’évolution de `Training Loss` (valeur de la fonction de perte)
+5. Évaluez le modèle entraîné en sections 5 et 6, puis comparez avec les résultats précédents
+   - Tableau comparatif : comment `format_rate` et `content_rate` ont-ils changé ?
+   - `Régressions` : questions réussies avant l’entraînement mais échouées après (une liste vide est souhaitable ; examinez les régressions de votre propre exécution)
+   - Types d’échecs restants : le modèle a-t-il **affirmé** une réponse en utilisant une autre entrée de la FAQ pour une question sans preuve, ou **évité de répondre** à une question couverte par la FAQ en déclarant qu’aucune information n’était disponible ?
+   - Section 6 : pour les questions absentes de la FAQ et de l’entraînement, a-t-il demandé une vérification ou affirmé une réponse ?
+6. Créez `result.json` en section 7. Notez les points essentiels dans `lectures/02/answer.md` et ouvrez une PR de la branche `lec02` vers `main` dans votre fork (vous pouvez modifier answer.md dans l’interface GitHub). Vous pouvez placer `result.json` dans `lectures/02/` et l’inclure dans la PR
+7. Choisissez **Runtime → Disconnect and delete runtime**
 
-> Colab の GPU は無料枠で使える時間に限りがあります。終わったら必ずランタイムを削除してください。
-> GPU が割り当てられない、または時間内に学習が終わらないときは、ノートブックの 4b に従い、講師が T4 で実行した結果を見ながら比較と考察を進めます。提出時は `executed_training_myself` を `False` にし、自分で実行できた範囲を answer.md に書いてください。
+> Le temps d’utilisation gratuit des GPU Colab est limité. Supprimez toujours l’environnement d’exécution à la fin.
+> Si aucun GPU n’est disponible ou si l’entraînement ne se termine pas à temps, suivez la section 4b du notebook pour comparer et analyser les résultats obtenus par l’enseignant sur T4. Pour la remise, réglez `executed_training_myself` sur `False` et indiquez dans answer.md les parties exécutées vous-même.
 
-seed を固定しても、GPU 上の学習は完全には再現しません。隣の人と「残った質問」が違っても異常ではないので、失敗の型で比べてください。
+Même avec une graine aléatoire (`seed`) fixe, l’entraînement sur GPU n’est pas parfaitement reproductible. Il est normal que les questions encore échouées diffèrent entre participants : comparez les types d’échecs.
 
-## 宿題（どれか1つで完了）
+## Devoir (un seul niveau suffit)
 
-| レベル | 内容 |
+| Niveau | Travail |
 |---|---|
-| 基礎 | `CONFIG` の `lora_r`・`lr`・`num_train_epochs` のどれか 1 つを変えて再学習し、`format_rate`・`content_rate`・最終 loss・学習時間を元の設定と並べて記録する。変えたら **ランタイム → セッションを再起動** して上から実行する（学習後のモデルが残っているため）。`result.json` を 2 つ比べる |
-| 実装 | `FAQ`・`GROUNDED`・`UNGROUNDED` を自分の題材（5 項目程度）に置き換えて学習し、学習前後を比べる。JSON の形式と `needs_review` の設計はそのまま使う。「根拠なし」の質問をどう用意したかも書く |
-| 発展 | `scripts/make_sft_dataset.py` で講座の用語集から Q&A データ（`messages` 形式の JSONL）を作り、FAQ の代わりに学習させる。評価用の質問（用語集にある語・言い回しを変えた質問・用語集にない語）と正解を自分で用意し、学習前後を比べる。第3回で作る「用語集を検索するエージェント」と比べて、どちらが向いているかを考察する |
+| Bases | Modifiez un seul paramètre de `CONFIG` parmi `lora_r`, `lr` et `num_train_epochs`, puis réentraînez. Comparez `format_rate`, `content_rate`, la valeur finale de la fonction de perte et la durée avec les réglages d’origine. Après modification, choisissez **Runtime → Restart session**, puis recommencez en haut (le modèle entraîné est encore en mémoire). Comparez deux fichiers `result.json` |
+| Mise en œuvre | Remplacez `FAQ`, `GROUNDED` et `UNGROUNDED` par votre propre sujet (environ 5 entrées), entraînez et comparez avant et après. Conservez le format JSON et la conception de `needs_review`. Expliquez aussi comment vous avez préparé les questions sans preuve |
+| Approfondissement | Avec `scripts/make_sft_dataset.py`, créez des paires Q&R à partir du glossaire (JSONL au format `messages`), puis entraînez le modèle sur ces données à la place de la FAQ. Préparez vos questions d’évaluation (termes présents, questions reformulées et termes absents) et les réponses attendues, puis comparez avant et après. Réfléchissez au choix entre cette approche et l’agent de recherche dans le glossaire qui sera créé dans Lecture 03 |
 
-発展のデータ作成（Codespaces で実行し、できたファイルを Colab にアップロードする）：
+Création des données d’approfondissement (dans Codespaces, puis téléversement du fichier dans Colab) :
 
 ```bash
 uv run python scripts/make_sft_dataset.py > glossary_sft.jsonl
 ```
 
-Colab 側では、各行がノートブックの `to_chat` と同じ `messages` 形式なので、読み込んだ行を `Dataset.from_list` にそのまま渡せば、セクション 4 の `SFTTrainer` でそのまま学習できます。評価（`test` と `gold`）は用語集に合わせて自分で作り直してください。
+Dans Colab, chaque ligne possède le même format `messages` que `to_chat` dans le notebook. Transmettez directement les lignes lues à `Dataset.from_list` pour les utiliser avec le `SFTTrainer` de la section 4. Recréez vous-même les évaluations (`test` et `gold`) pour le glossaire.
 
-セクション 8（4bit で読み込んで出力を比べる）は学習をしない観察なので、どのレベルでも結果に添えてかまいません。4bit のまま学習する方法（QLoRA）は、この講座の環境（T4）では動作を確認していないため、宿題の対象外です。
+La section 8 (chargement sur 4 bits et comparaison des sorties) est une observation sans entraînement : vous pouvez joindre ses résultats à n’importe quel niveau. L’entraînement sur 4 bits (QLoRA) n’a pas été vérifié dans l’environnement du cours (T4) et ne fait donc pas partie du devoir.
 
-## 注意
+## Attention
 
-- 学習後は変数 `model` にも adapter が差し込まれています。学習前の出力を取り直すときは `tuned.disable_adapter()`（セクション 6 参照）を使うか、セッションを再起動します
-- ノートブックのライブラリは動作確認した版（セクション 0 の `PINS`）に固定しています。版を変えると動かなくなることがあります
+- Après l’entraînement, un adaptateur est aussi inséré dans la variable `model`. Pour retrouver les sorties d’avant entraînement, utilisez `tuned.disable_adapter()` (voir section 6) ou redémarrez la session
+- Les bibliothèques du notebook sont verrouillées aux versions vérifiées (`PINS` en section 0). Changer les versions peut empêcher son fonctionnement

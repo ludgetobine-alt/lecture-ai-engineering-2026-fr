@@ -1,13 +1,13 @@
-# 第2回 参考結果（講師が T4 で実行したもの）
+# Lecture 02 : résultats de référence obtenus par l’enseignant sur T4
 
-GPU が割り当てられない、または時間内に学習が終わらないときは、ノートブック（`notebooks/lora_format_tuning.ipynb`）の **4b** に従い、ここにある結果を見ながら比較と考察を進めてください。
-提出するときは、セクション 7 の `executed_training_myself` を `False` にし、自分で実行できた範囲を `lectures/02/answer.md` に書いてください。
+Si aucun GPU n’est disponible ou si l’entraînement ne se termine pas à temps, suivez la section **4b** du notebook (`notebooks/lora_format_tuning.ipynb`) pour comparer et analyser les résultats présentés ici.
+Pour rendre le travail, réglez `executed_training_myself` sur `False` en section 7 et indiquez dans `lectures/02/answer.md` les parties exécutées vous-même.
 
-| ファイル | 内容 |
+| Fichier | Contenu |
 |---|---|
-| `result.json` | 設定（`config`）、ライブラリの版、学習前後の要約（`before` / `after`）、退行した質問、知識質問の結果 |
-| `eval_before.json` | 学習前の 21 問の出力原文と採点 |
-| `eval_after.json` | 学習後の 21 問の出力原文と採点 |
+| `result.json` | Configuration (`config`), versions des bibliothèques, résumés avant et après (`before` / `after`), questions ayant régressé et résultats des questions de connaissance |
+| `eval_before.json` | Sorties brutes et notes des 21 questions avant entraînement |
+| `eval_after.json` | Sorties brutes et notes des 21 questions après entraînement |
 
-- ファイルは GitHub の画面で開くか、「Download raw file」で保存してください
-- 同じ seed でも GPU 上の学習は完全には再現しないので、自分の結果と「残った質問」が違っても異常ではありません。失敗の型で比べてください
+- Ouvrez les fichiers dans GitHub ou enregistrez-les avec « Download raw file »
+- Même avec la même graine aléatoire (`seed`), l’entraînement sur GPU n’est pas parfaitement reproductible. Il est normal que les questions encore échouées diffèrent de vos résultats. Comparez les types d’échecs

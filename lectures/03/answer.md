@@ -1,15 +1,15 @@
-# 第3回 解答
+# Lecture 03 : réponses
 
-## 演習
+## Exercice
 
-- 第1回（素のLLM）とエージェントの回答の違い：
-- `--trace` で見えたツール呼び出し（ツール名と引数）：
-- 1つの質問での LLM 呼び出し回数（`requests`）：
-- 追加したツールと、docstring に書いた説明：
+- Différences entre les réponses de Lecture 01 (LLM sans outils) et celles de l’agent :
+- Appels d’outils visibles avec `--trace` (noms et arguments) :
+- Nombre d’appels au LLM pour une question (`requests`) :
+- Outil ajouté et description inscrite dans sa docstring :
 
-## 宿題
+## Devoir
 
-- 取り組んだレベル：基礎 / 実装 / 発展
-- やったこと：
-- 結果：
-- 気づき・疑問：
+- Niveau choisi : bases / mise en œuvre / approfondissement
+- Travail réalisé :
+- Résultats :
+- Observations et questions :

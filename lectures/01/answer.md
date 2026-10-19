@@ -1,14 +1,14 @@
-# 第1回 解答
+# Lecture 01 : réponses
 
-## 演習
+## Exercice
 
-- 講座に固有の質問（宿題の3レベル）へのモデルの回答（要約でよい）：
-- 用語集の正しい意味と比べて気づいたこと：
-- 表示できたトークン数（入力 / 出力）：
+- Réponse du modèle à la question propre au cours (les trois niveaux de devoirs ; un résumé suffit) :
+- Observations en comparant avec la définition correcte du glossaire :
+- Nombre de tokens affichés (entrée / sortie) :
 
-## 宿題
+## Devoir
 
-- 取り組んだレベル：基礎 / 実装 / 発展
-- やったこと：
-- 結果：
-- 気づき・疑問：
+- Niveau choisi : bases / mise en œuvre / approfondissement
+- Travail réalisé :
+- Résultats :
+- Observations et questions :

@@ -1,7 +1,7 @@
-"""第3回: エージェントに持たせるツール。
+"""Lecture 03 : outils mis à la disposition de l’agent.
 
-ここに書いた関数の docstring と型ヒントが、そのままモデルへの「ツールの説明文」になる。
-説明文を書き換えると、モデルがツールを使うかどうか・どんな引数で呼ぶかが変わる。
+Les docstrings et annotations de types des fonctions deviennent les descriptions d’outils fournies au modèle.
+Modifier une description change la décision d’utiliser un outil et le choix de ses arguments.
 """
 
 import json
@@ -29,18 +29,18 @@ def _names(entry: dict) -> list[str]:
 
 
 def search_glossary(query: str) -> str:
-    """講座の用語集から用語を検索し、定義と、どの回で扱うかを返す。
+    """Rechercher un terme dans le glossaire du cours et renvoyer sa définition et la séance associée.
 
-    AIエンジニアリングの用語や、この講座（AIE2026）に固有の言葉について
-    答える前に使うこと。query には調べたい用語を1つだけ入れる（例: "LoRA"）。
+    Utiliser cet outil avant de répondre sur un terme d’ingénierie de l’IA ou une expression propre
+    au cours AIE2026. Mettre un seul terme à rechercher dans query (exemple : "LoRA").
     """
     q = _normalize(query)
     if not q:
-        return "検索語が空です。調べたい用語を1つ指定してください。"
+        return "La recherche est vide. Indiquez un terme à rechercher."
     glossary = load_glossary()
 
     exact = [e for e in glossary if q in _names(e)]
-    # 「r」のような短い別名が何にでも当たらないよう、名前側が短いものは除く
+    # Exclure les noms trop courts pour éviter qu’un alias comme « r » corresponde à tout
     partial = [
         e for e in glossary
         if e not in exact and any(q in n or (len(n) >= 3 and n in q) for n in _names(e))
@@ -52,7 +52,7 @@ def search_glossary(query: str) -> str:
     hits = (exact + partial + in_definition)[:MAX_RESULTS]
 
     if not hits:
-        return f"用語集に「{query}」は見つかりませんでした。"
+        return f"Le terme « {query} » est introuvable dans le glossaire."
     return json.dumps(
         [
             {
@@ -68,12 +68,12 @@ def search_glossary(query: str) -> str:
 
 
 def get_lecture_summary(lecture: int) -> str:
-    """指定した回（1始まりの整数）の講義の要点を返す。
+    """Renvoyer les points essentiels de la séance indiquée (entier à partir de 1).
 
-    「第3回では何を学ぶ？」のように、回の内容や関係を聞かれたときに使う。
+    Utiliser pour une question sur le contenu ou les liens entre séances, par exemple « Qu’apprend-on dans Lecture 03 ? ».
     """
     path = DATA_DIR / "lectures" / f"{lecture:02d}.md"
     if not path.exists():
         available = sorted(p.stem for p in (DATA_DIR / "lectures").glob("*.md"))
-        return f"第{lecture}回の要点はまだありません。用意されている回: {', '.join(available)}"
+        return f"Le résumé de Lecture {lecture:02d} n’est pas encore disponible. Séances disponibles : {', '.join(available)}"
     return path.read_text(encoding="utf-8")

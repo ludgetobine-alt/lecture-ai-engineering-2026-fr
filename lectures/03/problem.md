@@ -1,85 +1,85 @@
-# 第3回 演習・宿題：学習支援エージェントを作る
+# Lecture 03 : exercices et devoir — créer un agent d’aide à l’apprentissage
 
-## この回のゴール
+## Objectifs de la séance
 
-- エージェントが「モデル＋ループ＋ツール」でできていることを、自分のコードで確かめる
-- どのツールが、どの引数で呼ばれたかを読める
-- ツールを1つ追加できる
+- Vérifier dans votre code qu’un agent se compose d’un « modèle + boucle + outils »
+- Savoir lire quels outils sont appelés et avec quels arguments
+- Savoir ajouter un outil
 
-## 準備
+## Préparation
 
-前の回までの作業が終わっている場合は、`main` から `lec03` ブランチを作ります。
+Si vous avez terminé le travail des séances précédentes, créez la branche `lec03` depuis `main`.
 
 ```bash
 git switch main && git switch -c lec03
 ```
 
-終わっていない場合は、講座 repo の開始時点のコード（`lec03-start` タグ）からブランチを作れます。
+Sinon, créez une branche depuis le code initial de l’exercice dans le dépôt du cours (tag `lec03-start`).
 
 ```bash
-git remote -v                     # upstream がなければ次の行で登録する
+git remote -v                     # Si upstream manque, l’ajouter avec la ligne suivante
 git remote add upstream https://github.com/matsuolab/lecture-ai-engineering-2026.git
 git fetch upstream --tags
 git switch -c lec03 lec03-start
 ```
 
-## 演習（30分）
+## Exercice (30 minutes)
 
-### 1. 第1回と同じ質問をエージェントに投げる
+### 1. Poser à l’agent la même question que dans Lecture 01
 
 ```bash
-uv run python -m app.agent "AIE2026の講座で使う「lecNN-start タグ」とは何ですか？"
+uv run python -m app.agent "Qu’est-ce que le tag lecNN-start utilisé dans le cours AIE2026 ?"
 ```
 
-第1回の `app.ask` の回答と比べてみましょう。
+Comparez avec la réponse de `app.ask` dans Lecture 01.
 
-### 2. ツール呼び出しを読む
+### 2. Lire les appels d’outils
 
 ```bash
-uv run python -m app.agent --trace "LoRAとQLoRAの違いは？"
+uv run python -m app.agent --trace "Quelle différence entre LoRA et QLoRA ?"
 ```
 
-`[tool call]` の行で、モデルがどのツールをどんな引数で呼んだかを確認します。`[usage]` の `requests` は、1つの質問で LLM を何回呼んだかを表します。
+Les lignes `[tool call]` indiquent les outils et arguments choisis par le modèle. La valeur `requests` dans `[usage]` indique le nombre d’appels au LLM pour une question.
 
-### 3. ツールを1つ追加する
+### 3. Ajouter un outil
 
-`app/tools.py` に `make_quiz` を追加し、`app/agent.py` の `TODO(第3回 演習)` の場所で登録します。
+Ajoutez `make_quiz` à `app/tools.py`, puis enregistrez-le dans `app/agent.py` à l’emplacement `TODO(Lecture 03 exercice)`.
 
-- 例：指定した回（`lecture: int`）の用語から1つを選び、「この用語の意味は？」という問題と答えを返す
-- docstring には「いつ、何のために使うツールか」を書く（モデルはこれを読んで使うかどうかを決める）
+- Exemple : choisir un terme de la séance indiquée (`lecture: int`) et renvoyer une question « Que signifie ce terme ? » avec sa réponse
+- Dans la docstring, expliquez quand et pourquoi utiliser l’outil (le modèle la lit pour décider de l’utiliser)
 
 ```bash
-uv run python -m app.agent --trace "第2回の内容から確認問題を1問出して"
+uv run python -m app.agent --trace "Pose-moi une question de révision sur Lecture 02"
 uv run pytest -q
 ```
 
-### 4. 提出
+### 4. Remise
 
-`lectures/03/answer.md` を書き、`lec03` → 自分の fork の `main` へ PR を出します。
+Remplissez `lectures/03/answer.md` et ouvrez une PR de `lec03` vers `main` dans votre fork.
 
-## 宿題（どれか1つで完了）
+## Devoir (un seul niveau suffit)
 
-| レベル | 内容 |
+| Niveau | Travail |
 |---|---|
-| 基礎 | `INSTRUCTIONS` やツールの docstring を書き換え、ツールの呼ばれ方や回答がどう変わるかを `--trace` で比べて記録する |
-| 実装 | 学習の記録を `learning_log/` に保存する `save_learning_log` ツールを作る。保存の前に利用者の確認を挟む（Pydantic AI の `requires_approval=True`）。TestModel を使ったテストも書く |
-| 発展 | 次のどちらか。(a) 同じエージェントを Google の ADK で作り直し、書き方や `adk web` での見え方を比較する。(b) 講義で紹介した Pi を Codespaces 上で動かし、公開されている Pi のシステムプロンプトと自分のエージェントの `INSTRUCTIONS` を比較する |
+| Bases | Modifiez `INSTRUCTIONS` ou les docstrings des outils. Comparez et notez avec `--trace` les changements dans les appels et les réponses |
+| Mise en œuvre | Créez l’outil `save_learning_log` pour enregistrer un journal d’apprentissage dans `learning_log/`. Demandez la confirmation de l’utilisateur avant l’enregistrement (`requires_approval=True` de Pydantic AI). Écrivez aussi un test avec TestModel |
+| Approfondissement | Choisissez (a) recréer le même agent avec ADK de Google et comparer le code et l’affichage dans `adk web`, ou (b) exécuter Pi, présenté en cours, dans Codespaces et comparer son prompt système public à `INSTRUCTIONS` de votre agent |
 
-### 発展（b）の進め方
+### Procédure pour l’approfondissement (b)
 
-Pi はファイルの読み書きやコマンドの実行ができるコーディングエージェントで、ツールを実行するたびに確認は求めません。自分のPCではなく、Codespaces の中で試してください。
+Pi est un agent de programmation capable de lire et d’écrire des fichiers et d’exécuter des commandes. Il ne demande pas de confirmation avant chaque appel d’outil. Essayez-le dans Codespaces, pas sur votre PC.
 
 ```bash
 npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 pi
 ```
 
-- Gemini は環境変数 `GEMINI_API_KEY` を読むので、Codespaces secret があればそのまま使えます。Pi の中で `/model` と入力し、Gemini のモデルを選びます
-- npm のパッケージ名は `@earendil-works/pi-coding-agent` です（古い記事にある `@mariozechner/...` は旧名です）
-- Pi のシステムプロンプトは、公開リポジトリ https://github.com/earendil-works/pi の `packages/coding-agent/src/core/system-prompt.ts` にあります。自分の `INSTRUCTIONS` と比べ、何が書かれていて何が書かれていないかを見てみましょう
-- 公式ドキュメント：https://github.com/earendil-works/pi/tree/main/packages/coding-agent/docs
+- Gemini lit la variable d’environnement `GEMINI_API_KEY` : le secret Codespaces suffit. Dans Pi, tapez `/model` et choisissez un modèle Gemini
+- Le nom du paquet npm est `@earendil-works/pi-coding-agent` (les anciens articles utilisent l’ancien nom `@mariozechner/...`)
+- Le prompt système de Pi se trouve dans `packages/coding-agent/src/core/system-prompt.ts` du dépôt public https://github.com/earendil-works/pi. Comparez-le à vos `INSTRUCTIONS` et examinez ce qu’il contient ou non
+- Documentation officielle : https://github.com/earendil-works/pi/tree/main/packages/coding-agent/docs
 
-## 参考
+## Références
 
-- Pydantic AI: https://ai.pydantic.dev/
-- ADK: https://google.github.io/adk-docs/
+- Pydantic AI : https://ai.pydantic.dev/
+- ADK : https://google.github.io/adk-docs/
